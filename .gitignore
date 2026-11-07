@@ -1,0 +1,8 @@
+.godot/
+build/
+*.apk
+*.aab
+*.pck
+.DS_Store
+__pycache__/
+*.tmp

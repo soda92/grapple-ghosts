@@ -1,0 +1,200 @@
+[gd_scene load_steps=30 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_player"]
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
+sky_top_color = Color(0.14, 0.30, 0.58, 1)
+sky_horizon_color = Color(0.68, 0.80, 0.90, 1)
+ground_bottom_color = Color(0.07, 0.11, 0.16, 1)
+ground_horizon_color = Color(0.55, 0.66, 0.74, 1)
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 3
+ambient_light_energy = 1.2
+tonemap_mode = 0
+fog_enabled = true
+fog_light_color = Color(0.72, 0.82, 0.92, 1)
+fog_density = 0.0018
+fog_sky_affect = 0.4
+
+[sub_resource type="PlaneMesh" id="ground_mesh"]
+size = Vector2(220, 220)
+
+[sub_resource type="StandardMaterial3D" id="ground_mat"]
+albedo_color = Color(0.22, 0.34, 0.25, 1)
+roughness = 0.95
+
+[sub_resource type="BoxShape3D" id="ground_shape"]
+size = Vector3(220, 1, 220)
+
+[sub_resource type="BoxMesh" id="slab_mesh"]
+size = Vector3(12, 2, 12)
+
+[sub_resource type="StandardMaterial3D" id="slab_mat"]
+albedo_color = Color(0.24, 0.55, 0.58, 1)
+roughness = 0.7
+
+[sub_resource type="BoxShape3D" id="slab_shape"]
+size = Vector3(12, 2, 12)
+
+[sub_resource type="BoxMesh" id="tower_mesh"]
+size = Vector3(10, 20, 10)
+
+[sub_resource type="StandardMaterial3D" id="tower_mat"]
+albedo_color = Color(0.38, 0.42, 0.48, 1)
+roughness = 0.85
+
+[sub_resource type="BoxShape3D" id="tower_shape"]
+size = Vector3(10, 20, 10)
+
+[sub_resource type="BoxMesh" id="cube_mesh"]
+size = Vector3(6, 6, 6)
+
+[sub_resource type="StandardMaterial3D" id="cube_mat"]
+albedo_color = Color(0.86, 0.50, 0.24, 1)
+roughness = 0.65
+
+[sub_resource type="BoxShape3D" id="cube_shape"]
+size = Vector3(6, 6, 6)
+
+[sub_resource type="BoxMesh" id="island_mesh"]
+size = Vector3(8, 2, 8)
+
+[sub_resource type="StandardMaterial3D" id="island_mat"]
+albedo_color = Color(0.56, 0.40, 0.72, 1)
+roughness = 0.7
+
+[sub_resource type="BoxShape3D" id="island_shape"]
+size = Vector3(8, 2, 8)
+
+[sub_resource type="BoxMesh" id="high_mesh"]
+size = Vector3(5, 5, 5)
+
+[sub_resource type="StandardMaterial3D" id="high_mat"]
+albedo_color = Color(0.82, 0.34, 0.48, 1)
+roughness = 0.6
+
+[sub_resource type="BoxShape3D" id="high_shape"]
+size = Vector3(5, 5, 5)
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation = Vector3(-0.9, 0.55, 0)
+light_energy = 1.3
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("ground_mesh")
+material_override = SubResource("ground_mat")
+
+[node name="Collision" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("ground_shape")
+
+[node name="Slab" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 8, -20)
+
+[node name="Mesh" type="MeshInstance3D" parent="Slab"]
+mesh = SubResource("slab_mesh")
+material_override = SubResource("slab_mat")
+
+[node name="Collision" type="CollisionShape3D" parent="Slab"]
+shape = SubResource("slab_shape")
+
+[node name="Tower" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 10, -38)
+
+[node name="Mesh" type="MeshInstance3D" parent="Tower"]
+mesh = SubResource("tower_mesh")
+material_override = SubResource("tower_mat")
+
+[node name="Collision" type="CollisionShape3D" parent="Tower"]
+shape = SubResource("tower_shape")
+
+[node name="Cube" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 12, -34)
+
+[node name="Mesh" type="MeshInstance3D" parent="Cube"]
+mesh = SubResource("cube_mesh")
+material_override = SubResource("cube_mat")
+
+[node name="Collision" type="CollisionShape3D" parent="Cube"]
+shape = SubResource("cube_shape")
+
+[node name="Island" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 10, -18)
+
+[node name="Mesh" type="MeshInstance3D" parent="Island"]
+mesh = SubResource("island_mesh")
+material_override = SubResource("island_mat")
+
+[node name="Collision" type="CollisionShape3D" parent="Island"]
+shape = SubResource("island_shape")
+
+[node name="High" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 20, -52)
+
+[node name="Mesh" type="MeshInstance3D" parent="High"]
+mesh = SubResource("high_mesh")
+material_override = SubResource("high_mat")
+
+[node name="Collision" type="CollisionShape3D" parent="High"]
+shape = SubResource("high_shape")
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 12)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Title" type="Label" parent="UI"]
+offset_left = 20.0
+offset_top = 16.0
+offset_right = 520.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(0.65, 0.95, 1, 0.95)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
+text = "GRAPPLE GHOSTS // PROTOTYPE"
+
+[node name="Cross" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -20.0
+offset_right = 16.0
+offset_bottom = 20.0
+theme_override_colors/font_color = Color(0.75, 1, 1, 0.95)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 30
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Hint" type="Label" parent="UI"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -56.0
+offset_right = 1100.0
+offset_bottom = -20.0
+theme_override_colors/font_color = Color(1, 1, 1, 0.8)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 15
+text = "WASD move · Shift sprint · Space jump · Hold RMB to grapple · Esc release mouse"
