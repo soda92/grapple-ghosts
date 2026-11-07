@@ -14,6 +14,11 @@ var pitch := 0.0
 var anchor := Vector3.ZERO
 var grappling := false
 
+var mobile := OS.has_feature("mobile")
+var touch_move := Vector2.ZERO
+var touch_sprint := false
+var touch_jump := false
+
 var _rope: ImmediateMesh
 var _line: MeshInstance3D
 
@@ -21,7 +26,8 @@ var _line: MeshInstance3D
 
 
 func _ready() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if not mobile:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	_rope = ImmediateMesh.new()
 	_line = MeshInstance3D.new()
 	_line.mesh = _rope
@@ -35,6 +41,8 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if mobile:
+		return
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * LOOK)
 		pitch = clampf(pitch - event.relative.y * LOOK, -1.45, 1.45)
@@ -54,10 +62,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	var input := Vector2(
-		float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
-		float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
-	).limit_length(1.0)
+	var input := touch_move
+	if not mobile:
+		input = Vector2(
+			float(Input.is_key_pressed(KEY_D)) - float(Input.is_key_pressed(KEY_A)),
+			float(Input.is_key_pressed(KEY_S)) - float(Input.is_key_pressed(KEY_W))
+		).limit_length(1.0)
 	var wish := global_transform.basis * Vector3(input.x, 0.0, input.y)
 
 	if grappling:
@@ -71,16 +81,43 @@ func _physics_process(delta: float) -> void:
 			velocity.x = flat.x
 			velocity.z = flat.y
 	else:
-		var speed := SPRINT if Input.is_key_pressed(KEY_SHIFT) else SPEED
+		var sprint := touch_sprint if mobile else Input.is_key_pressed(KEY_SHIFT)
+		var speed := SPRINT if sprint else SPEED
 		velocity.x = wish.x * speed
 		velocity.z = wish.z * speed
+		var jump := touch_jump if mobile else Input.is_key_pressed(KEY_SPACE)
+		if mobile:
+			touch_jump = false
 		if not is_on_floor():
 			velocity.y -= GRAVITY * delta
-		elif Input.is_key_pressed(KEY_SPACE):
+		elif jump:
 			velocity.y = JUMP
 
 	move_and_slide()
 	_draw_rope()
+
+
+func set_touch_move(v: Vector2, sprint: bool) -> void:
+	touch_move = v.limit_length(1.0)
+	touch_sprint = sprint
+
+
+func add_touch_look(rel: Vector2) -> void:
+	rotate_y(-rel.x * LOOK * 1.45)
+	pitch = clampf(pitch - rel.y * LOOK * 1.45, -1.45, 1.45)
+	cam.rotation.x = pitch
+
+
+func queue_jump() -> void:
+	touch_jump = true
+
+
+func set_touch_grapple(on: bool) -> void:
+	if on:
+		if not grappling:
+			_try_grapple()
+	else:
+		_release()
 
 
 func _try_grapple() -> void:

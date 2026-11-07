@@ -1,6 +1,8 @@
-[gd_scene load_steps=30 format=3]
+[gd_scene load_steps=32 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="2_main"]
+[ext_resource type="Script" path="res://scripts/touch_controls.gd" id="3_touch"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.14, 0.30, 0.58, 1)
@@ -83,6 +85,7 @@ roughness = 0.6
 size = Vector3(5, 5, 5)
 
 [node name="Main" type="Node3D"]
+script = ExtResource("2_main")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("env")
@@ -185,6 +188,9 @@ theme_override_font_sizes/font_size = 30
 text = "+"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="TouchControls" type="Control" parent="UI"]
+script = ExtResource("3_touch")
 
 [node name="Hint" type="Label" parent="UI"]
 anchor_top = 1.0
