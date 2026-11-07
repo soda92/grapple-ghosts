@@ -23,6 +23,11 @@ finish; your best time is saved locally.
 The active ring is cyan, completed rings turn green, future rings are gray.
 Out-of-order rings are ignored and the HUD tells you which ring is next.
 
+**Ring centers are grapple anchors.** Aim at the glowing orb inside the hoop
+until the crosshair turns cyan, then hold **GRAPPLE** to pull yourself in.
+Release over the platform to land. The 2nd/3rd platforms are high on purpose —
+you do not need to jump up to them; grapple the ring and release.
+
 
 ## Prototype controls
 

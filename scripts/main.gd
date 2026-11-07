@@ -4,6 +4,7 @@ extends Node3D
 func _ready() -> void:
 	var touch := $UI/TouchControls
 	touch.setup($Player)
+	$Player.crosshair = $UI/Cross
 	$Course.setup($Player, $UI)
 	$UI/Reset.pressed.connect(_retry)
 	$UI/Finish/Panel/Margin/VBox/Retry.pressed.connect(_retry)

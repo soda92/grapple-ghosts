@@ -24,6 +24,7 @@ var touch_controls: Control
 var rings: Array[Area3D] = []
 var ring_mats: Array[StandardMaterial3D] = []
 var ring_labels: Array[Label3D] = []
+var ring_orbs: Array[StandardMaterial3D] = []
 
 var next_index := 0
 var running := false
@@ -101,6 +102,34 @@ func _make_gate(pos: Vector3, yaw: float, txt: String, color: Color, index: int)
 	mesh.material_override = mat
 	area.add_child(mesh)
 
+	# Ring centers are explicit grapple anchors (layer 2), so the player can
+	# grapple straight to the hoop instead of trying to jump up to a platform.
+	var anchor := StaticBody3D.new()
+	anchor.collision_layer = 2
+	anchor.collision_mask = 0
+	var anchor_col := CollisionShape3D.new()
+	var anchor_sphere := SphereShape3D.new()
+	anchor_sphere.radius = 0.9
+	anchor_col.shape = anchor_sphere
+	anchor.add_child(anchor_col)
+	area.add_child(anchor)
+
+	var orb := MeshInstance3D.new()
+	var orb_mesh := SphereMesh.new()
+	orb_mesh.radius = 0.22
+	orb_mesh.height = 0.44
+	orb_mesh.radial_segments = 16
+	orb_mesh.rings = 8
+	orb.mesh = orb_mesh
+	var orb_mat := StandardMaterial3D.new()
+	orb_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	orb_mat.albedo_color = color
+	orb_mat.emission_enabled = true
+	orb_mat.emission = color
+	orb_mat.emission_energy_multiplier = 3.0
+	orb.material_override = orb_mat
+	area.add_child(orb)
+
 	var label := Label3D.new()
 	label.text = txt
 	label.position = Vector3(0.0, 3.0, 0.0)
@@ -116,6 +145,7 @@ func _make_gate(pos: Vector3, yaw: float, txt: String, color: Color, index: int)
 		rings.append(area)
 		ring_mats.append(mat)
 		ring_labels.append(label)
+		ring_orbs.append(orb_mat)
 
 
 func _on_gate(body: Node, index: int) -> void:
@@ -165,6 +195,8 @@ func _refresh_rings() -> void:
 		ring_mats[i].albedo_color = c
 		ring_mats[i].emission = c
 		ring_labels[i].modulate = c
+		ring_orbs[i].albedo_color = c
+		ring_orbs[i].emission = c
 
 
 func _finish() -> void:

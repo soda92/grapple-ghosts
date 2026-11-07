@@ -15,9 +15,11 @@ var anchor := Vector3.ZERO
 var grappling := false
 
 var mobile := OS.has_feature("mobile")
+var crosshair: Label
 var touch_move := Vector2.ZERO
 var touch_sprint := false
 var touch_jump := false
+var _aim_state := false
 
 var _rope: ImmediateMesh
 var _line: MeshInstance3D
@@ -95,6 +97,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_draw_rope()
+	_update_aim()
 
 
 func set_touch_move(v: Vector2, sprint: bool) -> void:
@@ -120,10 +123,27 @@ func set_touch_grapple(on: bool) -> void:
 		_release()
 
 
+func _update_aim() -> void:
+	if crosshair == null:
+		return
+	var from := cam.global_position
+	var to := from - cam.global_basis.z * RANGE
+	var query := PhysicsRayQueryParameters3D.create(from, to, 3, [get_rid()])
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	var aim := not hit.is_empty()
+	if aim == _aim_state:
+		return
+	_aim_state = aim
+	crosshair.add_theme_color_override(
+		"font_color",
+		Color(0.35, 1.0, 1.0, 1.0) if aim else Color(0.82, 0.95, 1.0, 0.9)
+	)
+
+
 func _try_grapple() -> void:
 	var from := cam.global_position
 	var to := from - cam.global_basis.z * RANGE
-	var query := PhysicsRayQueryParameters3D.create(from, to, 1, [get_rid()])
+	var query := PhysicsRayQueryParameters3D.create(from, to, 3, [get_rid()])
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	if hit.is_empty():
 		return
