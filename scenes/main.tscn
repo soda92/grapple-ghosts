@@ -1,8 +1,9 @@
-[gd_scene load_steps=32 format=3]
+[gd_scene load_steps=34 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="2_main"]
 [ext_resource type="Script" path="res://scripts/touch_controls.gd" id="3_touch"]
+[ext_resource type="Script" path="res://scripts/course.gd" id="4_course"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.14, 0.30, 0.58, 1)
@@ -84,6 +85,18 @@ roughness = 0.6
 [sub_resource type="BoxShape3D" id="high_shape"]
 size = Vector3(5, 5, 5)
 
+[sub_resource type="StyleBoxFlat" id="finish_style"]
+bg_color = Color(0.04, 0.07, 0.10, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.40, 0.80, 0.95, 0.8)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [node name="Main" type="Node3D"]
 script = ExtResource("2_main")
 
@@ -156,8 +169,11 @@ material_override = SubResource("high_mat")
 [node name="Collision" type="CollisionShape3D" parent="High"]
 shape = SubResource("high_shape")
 
+[node name="Course" type="Node3D" parent="."]
+script = ExtResource("4_course")
+
 [node name="Player" parent="." instance=ExtResource("1_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 12)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 18)
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -204,3 +220,121 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
 theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 15
 text = "WASD move · Shift sprint · Space jump · Hold RMB to grapple · Esc release mouse"
+
+[node name="Timer" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -90.0
+offset_top = 12.0
+offset_right = 90.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(0.92, 0.99, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 30
+text = "00:00.0"
+horizontal_alignment = 1
+
+[node name="Best" type="Label" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -260.0
+offset_top = 16.0
+offset_right = -20.0
+offset_bottom = 42.0
+theme_override_colors/font_color = Color(0.80, 0.90, 0.98, 0.9)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.8)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 16
+text = "BEST  --:--"
+horizontal_alignment = 2
+
+[node name="Progress" type="Label" parent="UI"]
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_top = 58.0
+offset_right = 250.0
+offset_bottom = 84.0
+theme_override_colors/font_color = Color(0.55, 0.95, 1, 0.95)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 16
+text = "CROSS THE START GATE"
+horizontal_alignment = 1
+
+[node name="Reset" type="Button" parent="UI"]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -130.0
+offset_top = 52.0
+offset_right = -20.0
+offset_bottom = 90.0
+focus_mode = 0
+theme_override_font_sizes/font_size = 14
+text = "RESET"
+
+[node name="Finish" type="Control" parent="UI"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+
+[node name="Dim" type="ColorRect" parent="UI/Finish"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.62)
+
+[node name="Panel" type="PanelContainer" parent="UI/Finish"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -150.0
+offset_right = 220.0
+offset_bottom = 150.0
+theme_override_styles/panel = SubResource("finish_style")
+
+[node name="Margin" type="MarginContainer" parent="UI/Finish/Panel"]
+theme_override_constants/margin_left = 26
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 26
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="UI/Finish/Panel/Margin"]
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Title" type="Label" parent="UI/Finish/Panel/Margin/VBox"]
+theme_override_colors/font_color = Color(0.6, 0.98, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 36
+text = "FINISH"
+horizontal_alignment = 1
+
+[node name="Time" type="Label" parent="UI/Finish/Panel/Margin/VBox"]
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "TIME   --:--"
+horizontal_alignment = 1
+
+[node name="Best" type="Label" parent="UI/Finish/Panel/Margin/VBox"]
+theme_override_colors/font_color = Color(0.78, 0.88, 0.96, 0.95)
+theme_override_font_sizes/font_size = 16
+text = "BEST   --:--"
+horizontal_alignment = 1
+
+[node name="New" type="Label" parent="UI/Finish/Panel/Margin/VBox"]
+visible = false
+theme_override_colors/font_color = Color(1, 0.82, 0.30, 1)
+theme_override_font_sizes/font_size = 16
+text = "NEW BEST!"
+horizontal_alignment = 1
+
+[node name="Retry" type="Button" parent="UI/Finish/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 48)
+focus_mode = 0
+theme_override_font_sizes/font_size = 20
+text = "RETRY"

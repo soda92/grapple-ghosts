@@ -3,9 +3,26 @@
 **Swing through a floating city and race your ghosts.**
 
 A 3D grapple-hook time-trial game for Android, built with Godot 4.7.
-This repository is the initial movement prototype, now playable on the phone.
+This repository is a playable time-trial prototype for the phone.
 
 ![Touch prototype](docs/prototype.png)
+
+## The first course
+
+Cross the **START** gate, touch rings **1 → 2 → 3** in order, then the gold
+**FINISH** ring on the tower. The timer starts at the gate and stops at the
+finish; your best time is saved locally.
+
+![The first course](docs/course.png)
+
+- Ring 1: purple island (left)
+- Ring 2: orange cube above the teal slab (right)
+- Ring 3: teal slab (middle)
+- Finish: tower top
+
+The active ring is cyan, completed rings turn green, future rings are gray.
+Out-of-order rings are ignored and the HUD tells you which ring is next.
+
 
 ## Prototype controls
 
@@ -17,6 +34,7 @@ This repository is the initial movement prototype, now playable on the phone.
 | Jump | Space | JUMP |
 | Grapple | Hold right mouse | Hold GRAPPLE |
 | Release the mouse | Esc | — |
+| Restart | R | RESET button |
 
 The cyan blocks and the tower are grappleable. Swing around, climb the tower,
 then try to cross the gaps without touching the ground.
@@ -25,6 +43,12 @@ then try to cross the gaps without touching the ground.
 
 ```bash
 godot --path .
+```
+
+## Course smoke test
+
+```bash
+godot --headless --path . --script res://tests/course_smoke.gd
 ```
 
 ## Android build
@@ -40,9 +64,9 @@ The Android preset targets `arm64-v8a` and uses the package
 ## Roadmap
 
 1. **Swing feel** — rope tension, reel-in, release boost, coyote time.
-2. **Course** — one island district with a 60–90 second route, rings and gaps.
+2. ~~**Course**~~ — start gate, three ordered rings and a tower finish.
 3. **Ghosts** — record the player's transform and replay the best run as a ghost.
-4. **Timer + medals** — bronze / silver / gold; personal best.
+4. ~~**Timer**~~ — live timer and saved best; medals next.
 5. ~~**Touch controls**~~ — left stick, drag look, hold GRAPPLE, JUMP; tested on the phone.
 6. **Characters** — anime skins from Blender, third-person optional.
 7. **Content** — three routes, shortcuts, secrets, weather/time of day.
@@ -56,4 +80,4 @@ The Android preset targets `arm64-v8a` and uses the package
 
 ## Status
 
-Bootstrap / movement prototype with working mobile controls. Not a finished game.
+Playable first course with mobile controls, timer and best time. Not a finished game.
