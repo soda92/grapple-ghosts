@@ -235,6 +235,10 @@ func _update_best_label() -> void:
 	best_label.text = "BEST  " + (_fmt(best) if best > 0.0 else "--:--")
 
 
+func format_time(t: float) -> String:
+	return _fmt(t)
+
+
 func _fmt(t: float) -> String:
 	var m := int(t) / 60
 	var s := t - m * 60.0

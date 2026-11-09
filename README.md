@@ -5,6 +5,18 @@
 A 3D grapple-hook time-trial game for Android, built with Godot 4.7.
 This repository is a playable time-trial prototype for the phone.
 
+![Start screen](docs/start.png)
+
+## Start screen
+
+The game opens on a title card with the current best time, a short course
+briefing and a **PLAY** button. Press **Enter** or **Space** on desktop to start.
+The Godot splash logo is disabled, so only the dark boot background shows
+before the start screen.
+
+The Android build now uses sensor landscape, so it follows the phone between
+both landscape orientations instead of staying locked to one side.
+
 ![Touch prototype](docs/prototype.png)
 
 ## The first course

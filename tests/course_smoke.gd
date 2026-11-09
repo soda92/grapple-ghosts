@@ -13,6 +13,11 @@ func _run() -> void:
 	var course = scene.get_node("Course")
 	var player = scene.get_node("Player")
 	var progress: Label = scene.get_node("UI/Progress")
+	var start: Control = scene.get_node("UI/Start")
+	print("start screen=%s player_physics=%s" % [start.visible, player.is_physics_processing()])
+	scene._start_game()
+	await process_frame
+	print("after play screen=%s player_physics=%s" % [start.visible, player.is_physics_processing()])
 
 	course._on_gate(player, -1)
 	print("start: running=%s progress=%s" % [course.running, progress.text])
