@@ -23,7 +23,7 @@ both landscape orientations instead of staying locked to one side.
 
 Cross the **START** gate, touch rings **1 → 2 → 3** in order, then the gold
 **FINISH** ring on the tower. The timer starts at the gate and stops at the
-finish; your best time is saved locally.
+finish; your best time, splits and a ghost replay are saved locally.
 
 ![The first course](docs/course.png)
 
@@ -32,13 +32,32 @@ finish; your best time is saved locally.
 - Ring 3: teal slab (middle)
 - Finish: tower top
 
+## Medals
+
+| Medal | Time |
+|---|---|
+| Gold | 00:35.0 |
+| Silver | 00:45.0 |
+| Bronze | 01:00.0 |
+
 The active ring is cyan, completed rings turn green, future rings are gray.
 Out-of-order rings are ignored and the HUD tells you which ring is next.
 
 **Ring centers are grapple anchors.** Aim at the glowing orb inside the hoop
-until the crosshair turns cyan, then hold **GRAPPLE** to pull yourself in.
-Release over the platform to land. The 2nd/3rd platforms are high on purpose —
-you do not need to jump up to them; grapple the ring and release.
+until the crosshair turns cyan, then hold **GRAPPLE** to reel in and swing.
+Release over the platform to land and keep your momentum. The 2nd/3rd platforms
+are high on purpose — grapple the ring, swing, and release.
+
+## Swing, ghosts and medals
+
+- Rope constraint, reel-in, release boost, coyote time and jump buffering
+- Speed-based FOV kick
+- Best run replay as a translucent cyan ghost; toggle it from the start screen
+- Ring split times with a live delta against your best splits
+- **GOLD 00:35.0 · SILVER 00:45.0 · BRONZE 01:00.0**
+- Medals shown in the finish panel
+
+![Best ghost](docs/ghost.png)
 
 
 ## Prototype controls
@@ -89,10 +108,10 @@ The Android preset targets `arm64-v8a` and uses the package
 
 ## Roadmap
 
-1. **Swing feel** — rope tension, reel-in, release boost, coyote time.
+1. ~~**Swing feel**~~ — rope constraint, reel-in, release boost, coyote time, FOV kick.
 2. ~~**Course**~~ — start gate, three ordered rings and a tower finish.
-3. **Ghosts** — record the player's transform and replay the best run as a ghost.
-4. ~~**Timer**~~ — live timer and saved best; medals next.
+3. ~~**Ghosts**~~ — record and replay the best run, toggle on the start screen.
+4. ~~**Timer**~~ — live timer, saved best, ring splits and medals.
 5. ~~**Touch controls**~~ — left stick, drag look, hold GRAPPLE, JUMP; tested on the phone.
 6. **Characters** — anime skins from Blender, third-person optional.
 7. **Content** — three routes, shortcuts, secrets, weather/time of day.
@@ -106,4 +125,5 @@ The Android preset targets `arm64-v8a` and uses the package
 
 ## Status
 
-Playable first course with mobile controls, timer and best time. Not a finished game.
+Playable first course with mobile controls, swing physics, timer, splits,
+medals and a best-run ghost replay. Not a finished game.

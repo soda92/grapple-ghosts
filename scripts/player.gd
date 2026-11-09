@@ -7,8 +7,13 @@ const JUMP := 6.0
 const GRAVITY := 20.0
 const LOOK := 0.0024
 const RANGE := 90.0
-const PULL := 38.0
 const AIR_CONTROL := 5.0
+const REEL := 16.0
+const MAX_GRAPPLE_SPEED := 40.0
+const RELEASE_BOOST := 4.0
+const COYOTE_TIME := 0.12
+const JUMP_BUFFER := 0.12
+const BASE_FOV := 80.0
 
 var pitch := 0.0
 var anchor := Vector3.ZERO
@@ -20,6 +25,11 @@ var touch_move := Vector2.ZERO
 var touch_sprint := false
 var touch_jump := false
 var _aim_state := false
+var _space_prev := false
+var _jump_buffer := 0.0
+var _coyote := 0.0
+var rope_len := 0.0
+var _fov := BASE_FOV
 
 var _rope: BoxMesh
 var _line: MeshInstance3D
@@ -80,32 +90,64 @@ func _physics_process(delta: float) -> void:
 		).limit_length(1.0)
 	var wish := global_transform.basis * Vector3(input.x, 0.0, input.y)
 
+	var jump_pressed := false
+	if mobile:
+		jump_pressed = touch_jump
+		touch_jump = false
+	else:
+		var down := Input.is_key_pressed(KEY_SPACE)
+		jump_pressed = down and not _space_prev
+		_space_prev = down
+	if jump_pressed:
+		_jump_buffer = JUMP_BUFFER
+	_jump_buffer = maxf(0.0, _jump_buffer - delta)
+	_coyote = maxf(0.0, _coyote - delta)
+	if is_on_floor():
+		_coyote = COYOTE_TIME
+
 	if grappling:
 		var to := anchor - global_position
-		if to.length() < 2.0:
-			_release()
+		var dist := to.length()
+		if dist < 2.0:
+			_release(false)
 		else:
-			velocity += to.normalized() * PULL * delta
+			rope_len = maxf(2.0, rope_len - REEL * delta)
+			velocity.y -= GRAVITY * delta
 			velocity += wish * AIR_CONTROL * delta
-			var flat := Vector2(velocity.x, velocity.z).limit_length(38.0)
-			velocity.x = flat.x
-			velocity.z = flat.y
+			var dir := to / dist
+			var radial := velocity.dot(dir)
+			if radial < 0.0:
+				velocity -= dir * radial
+			velocity = velocity.limit_length(MAX_GRAPPLE_SPEED)
+			move_and_slide()
+			var to2 := anchor - global_position
+			var d2 := to2.length()
+			if d2 > rope_len:
+				global_position = anchor - to2.normalized() * rope_len
 	else:
 		var sprint := touch_sprint if mobile else Input.is_key_pressed(KEY_SHIFT)
 		var speed := SPRINT if sprint else SPEED
 		velocity.x = wish.x * speed
 		velocity.z = wish.z * speed
-		var jump := touch_jump if mobile else Input.is_key_pressed(KEY_SPACE)
-		if mobile:
-			touch_jump = false
 		if not is_on_floor():
 			velocity.y -= GRAVITY * delta
-		elif jump:
+		elif _jump_buffer > 0.0 and _coyote > 0.0:
 			velocity.y = JUMP
+			_jump_buffer = 0.0
+			_coyote = 0.0
+		move_and_slide()
 
-	move_and_slide()
 	_draw_rope()
 	_update_aim(delta)
+
+
+func _process(delta: float) -> void:
+	var speed := Vector2(velocity.x, velocity.z).length()
+	var target := BASE_FOV \
+		+ clampf((speed - 10.0) / 26.0, 0.0, 1.0) * 8.0 \
+		+ (3.0 if grappling else 0.0)
+	_fov = lerpf(_fov, target, 1.0 - exp(-6.0 * delta))
+	cam.fov = _fov
 
 
 func set_touch_move(v: Vector2, sprint: bool) -> void:
@@ -160,11 +202,18 @@ func _try_grapple() -> void:
 	if hit.is_empty():
 		return
 	anchor = hit["position"]
+	rope_len = maxf(4.0, global_position.distance_to(anchor))
 	grappling = true
 
 
-func _release() -> void:
+func _release(boost := true) -> void:
+	if not grappling:
+		return
 	grappling = false
+	if boost:
+		var fwd := -cam.global_basis.z
+		velocity += fwd * RELEASE_BOOST + Vector3.UP * 1.5
+		velocity = velocity.limit_length(46.0)
 	_draw_rope()
 
 

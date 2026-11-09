@@ -264,6 +264,23 @@ theme_override_font_sizes/font_size = 16
 text = "CROSS THE START GATE"
 horizontal_alignment = 1
 
+
+
+[node name="Split" type="Label" parent="UI"]
+visible = false
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 86.0
+offset_right = 300.0
+offset_bottom = 112.0
+theme_override_colors/font_color = Color(0.55, 0.95, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.85)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+
 [node name="Reset" type="Button" parent="UI"]
 anchor_left = 1.0
 anchor_right = 1.0
@@ -325,6 +342,14 @@ horizontal_alignment = 1
 theme_override_colors/font_color = Color(0.78, 0.88, 0.96, 0.95)
 theme_override_font_sizes/font_size = 16
 text = "BEST   --:--"
+horizontal_alignment = 1
+
+
+
+[node name="Medal" type="Label" parent="UI/Finish/Panel/Margin/VBox"]
+theme_override_colors/font_color = Color(1, 0.82, 0.3, 1)
+theme_override_font_sizes/font_size = 17
+text = "NO MEDAL"
 horizontal_alignment = 1
 
 [node name="New" type="Label" parent="UI/Finish/Panel/Margin/VBox"]
@@ -399,11 +424,27 @@ theme_override_font_sizes/font_size = 14
 text = "HOLD GRAPPLE TO SWING"
 horizontal_alignment = 1
 
+
+
+[node name="Targets" type="Label" parent="UI/Start/Panel/Margin/VBox"]
+theme_override_colors/font_color = Color(0.78, 0.88, 0.96, 0.9)
+theme_override_font_sizes/font_size = 13
+text = "GOLD --:--   ·   SILVER --:--   ·   BRONZE --:--"
+horizontal_alignment = 1
+
 [node name="Best" type="Label" parent="UI/Start/Panel/Margin/VBox"]
 theme_override_colors/font_color = Color(1, 0.82, 0.32, 1)
 theme_override_font_sizes/font_size = 16
 text = "BEST  --:--"
 horizontal_alignment = 1
+
+
+
+[node name="Ghost" type="Button" parent="UI/Start/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 40)
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+text = "GHOST  --"
 
 [node name="Play" type="Button" parent="UI/Start/Panel/Margin/VBox"]
 custom_minimum_size = Vector2(0, 56)
