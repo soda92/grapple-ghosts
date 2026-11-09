@@ -44,6 +44,15 @@ you do not need to jump up to them; grapple the ring and release.
 The cyan blocks and the tower are grappleable. Swing around, climb the tower,
 then try to cross the gaps without touching the ground.
 
+## Performance
+
+- 60 FPS cap on mobile; 3D physics interpolation makes the 60 Hz body smooth on 120 Hz screens
+- FXAA instead of 2× MSAA, 100 m directional shadow distance and a 400 m camera far plane
+- Aim raycast runs at 25 Hz with a reusable query instead of allocating every frame
+- The rope is a persistent stretched mesh, not an `ImmediateMesh` rebuilt every physics tick
+- Timer text updates at 20 Hz; touch controls redraw only on touch/resize
+- Reference desktop result: ~64 FPS, 49 draw calls, ~18.9k primitives
+
 ## Run
 
 ```bash

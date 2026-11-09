@@ -21,8 +21,10 @@ var touch_sprint := false
 var touch_jump := false
 var _aim_state := false
 
-var _rope: ImmediateMesh
+var _rope: BoxMesh
 var _line: MeshInstance3D
+var _aim_q: PhysicsRayQueryParameters3D
+var _aim_t := 0.0
 
 @onready var cam: Camera3D = $Camera3D
 
@@ -30,16 +32,22 @@ var _line: MeshInstance3D
 func _ready() -> void:
 	if not mobile:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	_rope = ImmediateMesh.new()
+	_rope = BoxMesh.new()
+	_rope.size = Vector3(0.035, 0.035, 1.0)
 	_line = MeshInstance3D.new()
 	_line.mesh = _rope
 	_line.top_level = true
+	_line.visible = false
 	_line.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var mat := StandardMaterial3D.new()
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	mat.albedo_color = Color(0.35, 0.95, 1.0)
 	_line.material_override = mat
 	add_child(_line)
+
+	_aim_q = PhysicsRayQueryParameters3D.new()
+	_aim_q.collision_mask = 3
+	_aim_q.exclude = [get_rid()]
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -97,7 +105,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 	_draw_rope()
-	_update_aim()
+	_update_aim(delta)
 
 
 func set_touch_move(v: Vector2, sprint: bool) -> void:
@@ -123,13 +131,20 @@ func set_touch_grapple(on: bool) -> void:
 		_release()
 
 
-func _update_aim() -> void:
+func _aim_ray() -> Dictionary:
+	_aim_q.from = cam.global_position
+	_aim_q.to = cam.global_position - cam.global_basis.z * RANGE
+	return get_world_3d().direct_space_state.intersect_ray(_aim_q)
+
+
+func _update_aim(delta: float) -> void:
 	if crosshair == null:
 		return
-	var from := cam.global_position
-	var to := from - cam.global_basis.z * RANGE
-	var query := PhysicsRayQueryParameters3D.create(from, to, 3, [get_rid()])
-	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	_aim_t -= delta
+	if _aim_t > 0.0:
+		return
+	_aim_t = 0.04
+	var hit := _aim_ray()
 	var aim := not hit.is_empty()
 	if aim == _aim_state:
 		return
@@ -141,10 +156,7 @@ func _update_aim() -> void:
 
 
 func _try_grapple() -> void:
-	var from := cam.global_position
-	var to := from - cam.global_basis.z * RANGE
-	var query := PhysicsRayQueryParameters3D.create(from, to, 3, [get_rid()])
-	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	var hit := _aim_ray()
 	if hit.is_empty():
 		return
 	anchor = hit["position"]
@@ -157,14 +169,23 @@ func _release() -> void:
 
 
 func _draw_rope() -> void:
-	_rope.clear_surfaces()
 	if not grappling:
+		_line.visible = false
 		return
 	var from := cam.global_position \
 		+ cam.global_basis.x * 0.22 \
 		- cam.global_basis.y * 0.18 \
 		- cam.global_basis.z * 0.18
-	_rope.surface_begin(Mesh.PRIMITIVE_LINES)
-	_rope.surface_add_vertex(from)
-	_rope.surface_add_vertex(anchor)
-	_rope.surface_end()
+	var delta := anchor - from
+	var length := delta.length()
+	if length < 0.02:
+		_line.visible = false
+		return
+	var dir := delta / length
+	var up := Vector3.UP
+	if absf(dir.dot(up)) > 0.98:
+		up = Vector3.RIGHT
+	var basis := Basis.looking_at(dir, up)
+	_line.global_transform = Transform3D(
+		basis.scaled(Vector3(1.0, 1.0, length)), (from + anchor) * 0.5)
+	_line.visible = true

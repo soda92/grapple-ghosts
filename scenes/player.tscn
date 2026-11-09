@@ -18,4 +18,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
 current = true
 fov = 80.0
 near = 0.05
-far = 600.0
+far = 400.0

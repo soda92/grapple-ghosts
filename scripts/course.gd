@@ -31,6 +31,7 @@ var running := false
 var finished := false
 var time := 0.0
 var best := 0.0
+var _timer_t := 0.0
 
 
 func _ready() -> void:
@@ -58,8 +59,11 @@ func setup(p: Node3D, u: CanvasLayer) -> void:
 func _process(delta: float) -> void:
 	if running and not finished:
 		time += delta
-		if timer_label != null:
-			timer_label.text = _fmt(time)
+		_timer_t += delta
+		if _timer_t >= 0.05:
+			_timer_t = 0.0
+			if timer_label != null:
+				timer_label.text = _fmt(time)
 
 
 func _build_course() -> void:
@@ -157,6 +161,7 @@ func _on_gate(body: Node, index: int) -> void:
 			return
 		running = true
 		time = 0.0
+		_timer_t = 0.0
 		next_index = 0
 		progress_label.text = "RING 1 / %d" % rings.size()
 		_refresh_rings()

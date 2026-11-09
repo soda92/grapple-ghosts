@@ -2,6 +2,8 @@ extends Node3D
 ## Wires the course, UI and platform-specific hints.
 
 func _ready() -> void:
+	if OS.has_feature("mobile"):
+		Engine.max_fps = 60
 	var touch := $UI/TouchControls
 	touch.setup($Player)
 	$Player.crosshair = $UI/Cross

@@ -24,8 +24,8 @@ func _ready() -> void:
 	])
 	visible = OS.has_feature("mobile")
 	set_process_input(true)
-	set_process(true)
 	player = get_tree().get_first_node_in_group("player")
+	resized.connect(queue_redraw)
 
 
 func setup(p: Node) -> void:
@@ -98,11 +98,6 @@ func _drag(pos: Vector2, idx: int, rel: Vector2) -> void:
 	elif idx == _look_idx:
 		if player:
 			player.add_touch_look(rel)
-
-
-func _process(_delta: float) -> void:
-	if visible:
-		queue_redraw()
 
 
 # ---------------------------------------------------------------------------
